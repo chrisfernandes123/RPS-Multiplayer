@@ -23,6 +23,9 @@ var dbRefPathPlayer1Career = "";
 var dbRefPathPlayer2Career = "";
 var player1CareerWinCount = 0;
 var player2CareerWinCount = 0;
+var player1CareerLossCount = 0;
+var player2CareerLossCount = 0;
+var dbObjectAddPlayers;
 var player1 = "";
 var player2 = "";
 var player1Code = "";
@@ -46,82 +49,81 @@ var database = firebase.database();
 database.ref(dbRefPathAddPlayers).on("value", function (snapshot) {
   var databaseObject = snapshot.val();
 
-$("#p1name").html(databaseObject.Player1.name);
-$("#p2name").html(databaseObject.Player2.name);
-
-getPlayer1Career(databaseObject.Player1.career);
-getPlayer2Career(databaseObject.Player2.career);
-
   
+  if (snapshot.child("Player1").exists()){
+$("#p1name").html(databaseObject.Player1.name);
+}
+
+if (snapshot.child("Player2").exists()){
+$("#p2name").html(databaseObject.Player2.name);
+}
+
 
 });
-
-
 
 // Whenever a user clicks the submit-bid button
 $("#add-player").on("click", function (event) {
   event.preventDefault();
 
-  
-    if (dbRefPathPlayer1Career !== ""){
+  //  var nameInput = localStorage.getItem("nameInput")
+  // localStorage.setItem("toDoItems", JSON.stringify(toDoItems)
 
-   
-  getPlayer1Career(dbRefPathPlayer1Career);
-}
 
-if (dbRefPathPlayer2Career !== ""){
-
-  getPlayer2Career(dbRefPathPlayer2Career);
-}
-
-  $("#add-player").empty();
 
   database.ref(dbRefPathAddPlayers).on("value", function (snapshot) {
-    var databaseObject = snapshot.val();
-
-    if (snapshot.child("Player1").exists() && databaseObject.Player1.key !== con.key && bRoundComplete === false) {
+    dbObjectAddPlayers = snapshot.val();
+   
+    if (snapshot.child("Player1").exists() && bRoundComplete === false) {
       
+      getPlayer1Career(dbObjectAddPlayers.Player1.career);
     
-      
-      if (snapshot.child("Player2").exists() && databaseObject.Player2.key !== con.key && bRoundComplete === false) {
-        
-      
+      if (snapshot.child("Player2").exists() &&  bRoundComplete === false) {
+       
+      getPlayer2Career(dbObjectAddPlayers.Player2.career);
       }
       else{
-       
+          if (player2 === ""){
          player2 = $("#name-input").val();
           player2Code = $("#code-input").val();
+         
           dbRefPathPlayer2Career = dbRefPath + "Career/" + player2 + "|" + player2Code +  "/";
-        $("#div-add-player").empty();
-        isPlayer2 = true;
-
-  
-          $("#game-progress").html("Game in Progress! ")
-       
-          con.update({
-            name: player2
-         });
         
-        database.ref(dbRefPathAddPlayers + "Player2/").set({
-          name: player2,
-          key: con.key,
-          code: player2Code,
-        career: dbRefPathPlayer2Career
-        });
-      // }
+          $("#div-add-player").empty();
+           isPlayer2 = true;
+           
+           $("#game-progress").html("Game in Progress! ")
+       
+           con.update({
+             name: player2
+          });
+         
+         database.ref(dbRefPathAddPlayers + "Player2/").set({
+           name: player2,
+           key: con.key,
+           code: player2Code,
+         career: dbRefPathPlayer2Career
+         });
+     
 
-      getPlayer1Career(dbRefPathPlayer1Career);
-      getPlayer2Career(dbRefPathPlayer2Career);
 
+
+
+       getPlayer1Career(dbObjectAddPlayers.Player1.career);
+     
+       getPlayer2Career(dbObjectAddPlayers.Player2.career);
           
+          }  // If player 2 is  blank
+        
+
       }
     }
     else {
-    
+      if (player1 === ""){
        player1 = $("#name-input").val();
         player1Code = $("#code-input").val();
         
         dbRefPathPlayer1Career = dbRefPath + "Career/" + player1 + "|" + player1Code +  "/";
+     
         $("#div-add-player").empty();
        
       isPlayer1 = true;
@@ -137,16 +139,14 @@ if (dbRefPathPlayer2Career !== ""){
         code: player1Code,
         career: dbRefPathPlayer1Career
       });
-    // }
-
-
-    getPlayer1Career(dbRefPathPlayer1Career);
-    getPlayer2Career(dbRefPathPlayer2Career);
+  
+    getPlayer1Career(dbObjectAddPlayers.Player1.career);
+    getPlayer2Career(dbObjectAddPlayers.Player2.career);
 
 
     }
 
-
+  } //if player1 is blank
   
 
   });
@@ -154,19 +154,11 @@ if (dbRefPathPlayer2Career !== ""){
 
     $("#player1CareerWinCount").html("Career Wins: " + 0);
     $("#player2CareerWinCount").html("Career Wins: " + 0);
-    getPlayer1Career(databaseObject.Player1.career);
-getPlayer2Career(databaseObject.Player2.career);
-
 
   });
 
-
-
-
-
-
 function getPlayer1Career(career){
-
+  
 database.ref(career).on("value", function (snapshot) {
 
   var databaseObject = snapshot.val();
@@ -177,7 +169,21 @@ database.ref(career).on("value", function (snapshot) {
     $("#player1CareerWinCount").html("Career Wins: " + player1CareerWinCount);
   }
   else{
+
+ 
+
     $("#player1CareerWinCount").html("Career Wins: 0" );
+  }
+
+
+  if (snapshot.child("Losses").exists()) {
+    player1CareerLossCount = databaseObject.Losses;
+   
+  }
+  else{
+
+  
+    player1CareerLossCount = 0;
   }
   
 
@@ -189,14 +195,26 @@ function getPlayer2Career(career){
   database.ref(career).on("value", function (snapshot) {
 
     var databaseObject = snapshot.val();
-
    
     if (snapshot.child("Wins").exists()) {
       player2CareerWinCount = databaseObject.Wins;
       $("#player2CareerWinCount").html("Career Wins: " + player2CareerWinCount);
     }
     else{
+
+     
       $("#player2CareerWinCount").html("Career Wins: 0" );
+    }
+
+
+     
+    if (snapshot.child("Losses").exists()) {
+      player2CareerLossCount = databaseObject.Losses;
+     
+    }
+    else{
+    
+      player2CareerLossCount = 0;
     }
 
   
@@ -268,15 +286,15 @@ connectionsRef.on("value", function (snap) {
 database.ref(dbRefPathPlayers).on("value", function (snapshot) {
 
 
-  var databaseObject = snapshot.val();
+  dbObjectAddPlayers = snapshot.val();
 
   if (snapshot.child("Player1").child("Name").exists()) {
-    player1 = databaseObject.Player1.name;
+    player1 = dbObjectAddPlayers.Player1.name;
     $("#player1Name").html(player1);
   }
 
   if (snapshot.child("Player2").child("Name").exists()) {
-    player2 = databaseObject.Player2.name;
+    player2 = dbObjectAddPlayers.Player2.name;
       $("#player2Name").html(player2);
   }
 
@@ -284,22 +302,24 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
   var player2Choice = null;
 
   if (snapshot.child("Player1").child("Choice").exists()) {
-    player1Choice = databaseObject.Player1.Choice.Choice;
+    player1Choice = dbObjectAddPlayers.Player1.Choice.Choice;
   }
 
   if (snapshot.child("Player2").child("Choice").exists()) {
-    player2Choice = databaseObject.Player2.Choice.Choice;
+    player2Choice = dbObjectAddPlayers.Player2.Choice.Choice;
   }
 
 
   if (snapshot.child("Player1").child("Wins").exists()) {
-    player1WinCount = databaseObject.Player1.Wins.Wins;
+    player1WinCount = dbObjectAddPlayers.Player1.Wins.Wins;
   }
 
   if (snapshot.child("Player2").child("Wins").exists()) {
-    player2WinCount = databaseObject.Player2.Wins.Wins;
+    player2WinCount = dbObjectAddPlayers.Player2.Wins.Wins;
   }
 
+
+  
 
 
 
@@ -355,7 +375,7 @@ if (bRoundComplete === true){
          $(".player2Img").attr("src", "./assets/images/question.png");
       
 
-       }, 2000);
+       }, 3000);
 
 
 }
@@ -455,6 +475,7 @@ if (bRoundComplete === true){
       player2Wins = false;
       player1WinCount++;
       player1CareerWinCount++;
+      player2CareerLossCount++;
       // Save the new price in Firebase
       database.ref(dbRefPathPlayers + "Player1/Wins/").set({
         Wins: player1WinCount
@@ -462,8 +483,16 @@ if (bRoundComplete === true){
 
      
       database.ref(dbRefPathPlayer1Career).set({
-        Wins: player1CareerWinCount
+        Wins: player1CareerWinCount,
+        Losses: player1CareerLossCount
       });
+
+      database.ref(dbRefPathPlayer2Career).set({
+        Wins: player2CareerWinCount,
+        Losses: player2CareerLossCount
+       
+      });
+    
 
 
 
@@ -473,13 +502,20 @@ if (bRoundComplete === true){
       player2Wins = false;
       player2WinCount++;
       player2CareerWinCount++;
+      player1CareerLossCount++;
       database.ref(dbRefPathPlayers + "Player2/Wins/").set({
         Wins: player2WinCount
       });
 
       
       database.ref(dbRefPathPlayer2Career).set({
-        Wins: player2CareerWinCount
+        Wins: player2CareerWinCount,
+        Losses: player2CareerLossCount
+      });
+
+      database.ref(dbRefPathPlayer1Career).set({
+        Wins: player2CareerWinCount,
+        Losses: player1CareerLossCount
       });
 
 
