@@ -41,6 +41,8 @@ var player1ResultImg = "";
 var player2ResultImg = "";
 var bRoundComplete = false;
 var con;
+var localStorageNameInput;
+var localStorageCodeInput;
 
 
 // Create a variable to reference the database.
@@ -65,8 +67,18 @@ $("#p2name").html(databaseObject.Player2.name);
 $("#add-player").on("click", function (event) {
   event.preventDefault();
 
-  //  var nameInput = localStorage.getItem("nameInput")
-  // localStorage.setItem("toDoItems", JSON.stringify(toDoItems)
+    localStorageNameInput = localStorage.getItem("rpsMPnameInput");
+   localStorageCodeInput = localStorage.getItem("rpsMPcodeInput");
+
+   if (localStorageNameInput === null){
+       localStorage.setItem("rpsMPnameInput",  $("#name-input").val());
+       localStorageNameInput = $("#name-input").val();
+   }
+  
+   if (localStorageCodeInput === null){
+    localStorage.setItem("rpsMPcodeInput",  $("#code-input").val());
+      localStorageNameInput = $("#code-input").val();
+  }
 
 
 
