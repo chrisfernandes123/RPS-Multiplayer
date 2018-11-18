@@ -40,16 +40,19 @@
 
      
 
-    <div class="row">
+    <div class="row" id="instructionsAndConnect">
         <div class="col-lg-12">
           <div class="card card-default">
-            <div class="card-body text-center instructions">
-           
+            <div class="card-body text-center">
+              <div id="instructions">
                   Please enter your name and a 4 digit code of your choosing.  Then, click the Connect button to join the game. <br>
                   Remember the name and 4 digit code entered and always use it to connect. 
                   The combination of the name and 4 digit code entered will be used to save your career wins.
                   If you connected before, your name and 4 digit code used will populate by default.
             Good Luck! <br>
+          </div>
+
+          
             <div id="div-add-player">
                   Name:  <input id="name-input" type="text">
                   Code:  <input id="code-input"  type="number" min="4" max="4">
@@ -57,12 +60,13 @@
                   <button class="btn btn-success" id="add-player" type="submit">Connect</button>
                 </div>
                 
-                  <span id="connected-viewers"> </span>
-                  <span id="people-connected"></span>
+                
             </div>
           </div>
         </div>
       </div>
+
+
 
 
       <div class="row">
@@ -71,7 +75,8 @@
 
             <div class="card-body text-center">
               <h5> Game Status: <span id="game-progress">Awaiting 2 players to join...</span></h5>
-             
+              <span id="connected-viewers"> </span>
+              <span id="people-connected"></span>
             </div>
             
           </div>
@@ -136,7 +141,9 @@
 
                 <div class="row text-center">
                   <div class="col-sm-12">
+                    <br>
                     <h9> Round Status: <span id="round-results">waiting for results</span></h9>
+                    
                   </div>
  
                   </div>

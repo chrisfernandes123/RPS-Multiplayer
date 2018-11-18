@@ -45,9 +45,11 @@ var startResultsTimeout;
 var player1ResultImg = "";
 var player2ResultImg = "";
 var bRoundComplete = false;
+var bRoundCompleteImageDelay = false;
 var con;
 var localStorageNameInput;
 var localStorageCodeInput;
+
 
 
 
@@ -202,7 +204,8 @@ $("#add-player").on("click", function (event) {
 
           dbRefPathPlayer2Career = dbRefPath + "Career/" + player2 + "|" + player2Code + "/";
 
-          $("#div-add-player").empty();
+          $("#instructionsAndConnect").empty();
+          
           isPlayer2 = true;
 
          
@@ -234,14 +237,15 @@ $("#add-player").on("click", function (event) {
       }
     } else {
       if (player1 === "") {
-     
+        
         player1 = $("#name-input").val();
         player1Code = $("#code-input").val();
 
         dbRefPathPlayer1Career = dbRefPath + "Career/" + player1 + "|" + player1Code + "/";
 
-        $("#div-add-player").empty();
-
+        $("#instructionsAndConnect").empty();
+      
+        
         isPlayer1 = true;
         //player1 = databaseObject.Player1.name;
         con.update({
@@ -519,7 +523,7 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
 
   if (player1Choice !== null) {
     $(".player1Img").attr("src", "./assets/images/checkmark.png");
-  } else if (bRoundComplete === true) {
+  } else if (bRoundCompleteImageDelay === true) {
     $(".player1Img").attr("src", player1ResultImg);
   } else {
     $(".player1Img").attr("src", "./assets/images/question.png");
@@ -527,7 +531,7 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
 
   if (player2Choice !== null) {
     $(".player2Img").attr("src", "./assets/images/checkmark.png");
-  } else if (bRoundComplete === true) {
+  } else if (bRoundCompleteImageDelay === true) {
     $(".player2Img").attr("src", player2ResultImg);
 
   } else {
@@ -541,13 +545,13 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
   if (player1Choice !== null && player2Choice !== null) {
 
     bRoundComplete = true;
-
-    if (bRoundComplete === true) {
-
+    bRoundCompleteImageDelay = true;
+    // if (bRoundComplete === true) {
+    //   bRoundComplete = false;
       startResultsTimeout = setTimeout(function () {
 
         clearTimeout(startResultsTimeout);
-        bRoundComplete = false;
+        bRoundCompleteImageDelay = false;
         $(".player1Img").attr("src", "./assets/images/question.png");
         $(".player2Img").attr("src", "./assets/images/question.png");
 
@@ -559,7 +563,7 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
       }, 3000);
 
 
-    }
+    // }
 
 
     player1Wins = false;
@@ -570,19 +574,19 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
       if (player2Choice === "p") {
         player1ResultImg = "./assets/images/rocklose.png";
         player2ResultImg = "./assets/images/paperwin.png";
-        statusmsg = player2 + " wins! Paper beats Rock";
+        statusmsg = dbObjectRefPathAddPlayers.Player2.name + " wins! Paper beats Rock";
         player1Wins = false;
         player2Wins = true;
       } else if (player2Choice === "r") {
         player1ResultImg = "./assets/images/rocktie.png";
         player2ResultImg = "./assets/images/rocktie.png";
-        statusmsg = "It's a tie! " + player1 + " and " + player2 + " chose the same. Rock equals Rock";
+        statusmsg = "It's a tie! " + dbObjectRefPathAddPlayers.Player1.name + " and " + dbObjectRefPathAddPlayers.Player2.name + " chose the same. Rock equals Rock";
         player1Wins = false;
         player2Wins = false;
       } else if (player2Choice === "s") {
         player1ResultImg = "./assets/images/rockwin.png";
         player2ResultImg = "./assets/images/scissorslose.png";
-        statusmsg = player1 + " wins! Rock beats Scissor";
+        statusmsg = dbObjectRefPathAddPlayers.Player1.name + " wins! Rock beats Scissor";
         player1Wins = true;
         player2Wins = false;
       }
@@ -591,21 +595,19 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
       if (player2Choice === "p") {
         player1ResultImg = "./assets/images/papertie.png";
         player2ResultImg = "./assets/images/papertie.png";
-        statusmsg = "It's a tie! " + player1 + " and " + player2 + " chose the same. Paper equals Paper";
+        statusmsg = "It's a tie! " + dbObjectRefPathAddPlayers.Player1.name + " and " + dbObjectRefPathAddPlayers.Player2.name + " chose the same. Paper equals Paper";
         player1Wins = false;
         player2Wins = false;
       } else if (player2Choice === "r") {
         player1ResultImg = "./assets/images/paperwin.png";
         player2ResultImg = "./assets/images/rocklose.png";
-        statusmsg = player1 + " wins! Paper beats Rock";
+        statusmsg = dbObjectRefPathAddPlayers.Player1.name + " wins! Paper beats Rock";
         player1Wins = true;
         player2Wins = false;
       } else if (player2Choice === "s") {
-        
         player1ResultImg = "./assets/images/paperlose.png";
         player2ResultImg = "./assets/images/scissorswin.png";
-        statusmsg = player2 + " wins! Scissor beats Paper";
-        
+        statusmsg = dbObjectRefPathAddPlayers.Player2.name + " wins! Scissor beats Paper";
         player1Wins = false;
         player2Wins = true;
       }
@@ -614,19 +616,19 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
       if (player2Choice === "p") {
         player1ResultImg = "./assets/images/scissorswin.png";
         player2ResultImg = "./assets/images/paperlose.png";
-        statusmsg = player1 + " wins! Scissor beats Paper";
+        statusmsg = dbObjectRefPathAddPlayers.Player1.name + " wins! Scissor beats Paper";
         player1Wins = true;
         player2Wins = false;
       } else if (player2Choice === "r") {
         player1ResultImg = "./assets/images/scissorslose.png";
         player2ResultImg = "./assets/images/rockwin.png";
-        statusmsg = player2 + " wins! Rock beats Scissor";
+        statusmsg = dbObjectRefPathAddPlayers.Player2.name + " wins! Rock beats Scissor";
         player1Wins = false;
         player2Wins = true;
       } else if (player2Choice === "s") {
         player1ResultImg = "./assets/images/scissorstie.png";
         player2ResultImg = "./assets/images/scissorstie.png";
-        statusmsg = "It's a tie! " + player1 + " and " + player2 + " chose the same. Scissor equals Scissor";
+        statusmsg = "It's a tie! " + dbObjectRefPathAddPlayers.Player1.name + " and " + dbObjectRefPathAddPlayers.Player2.name + " chose the same. Scissor equals Scissor";
         player1Wins = false;
         player2Wins = false;
       }
@@ -749,14 +751,14 @@ $("#rock").on("click", function (event) {
   event.preventDefault();
 
   if (isPlayer1 === true) {
-    alert("isPlayer1: " + isPlayer1);
+  
     // Save the new price in Firebase
     database.ref(dbRefPathPlayers + "Player1/Choice/").set({
       Choice: "r",
     });
 
   } else if (isPlayer2 === true) {
-    alert("isPlayer2: " + isPlayer2);
+   
     // Save the new price in Firebase
     database.ref(dbRefPathPlayers + "Player2/Choice/").set({
       Choice: "r",
@@ -808,116 +810,3 @@ $("#scissors").on("click", function (event) {
   }
 
 });
-
-
-// //  This code will run as soon as the page loads.
-// window.onload = function () {
-//   $("#start").click(stopwatch.start);
-// };
-
-//  Variable that will hold our setInterval that runs the stopwatch
-var intervalId;
-var startTimeout;
-
-// prevents the clock from being sped up unnecessarily
-var clockRunning = false;
-
-var totaltime = 0;
-var correctanswers = 0;
-var incorrectanswers = 0;
-
-var currentCorrectAnswer = "";
-var currentCorrectAnswerPic = "";
-
-//  Our stopwatch object.
-var stopwatch = {
-  maxtime: 0,
-  time: 0,
-
-  reset: function () {
-
-    stopwatch.maxtime = 5;
-    stopwatch.time = stopwatch.maxtime;
-    $("#timer").html(stopwatch.timeConverter(stopwatch.maxtime));
-
-
-  },
-
-  start: function () {
-
-    stopwatch.reset();
-    //   Used setInterval to start the count here and set the clock to running.
-    if (!clockRunning) {
-      clearInterval(intervalId);
-      //IMPORTANT NOTE: You do not want to use stopwatch.count() as that "CALLS" the function. 
-      //If you are passing a function, you must not use the brackets.
-
-      intervalId = setInterval(stopwatch.count, 1000);
-
-      //Connects the onclick event to the buttons.
-      $('.btnAnswer').on('click', function (event) {
-        $("#timer").empty();
-
-
-      });
-
-
-
-    }
-
-  },
-
-  stop: function () {
-
-    //Used clearInterval to stop the count here and set the clock to not be running.
-    clearInterval(intervalId);
-  },
-
-
-  count: function () {
-
-
-    stopwatch.time--;
-
-    // Get the current time, pass that into the stopwatch.timeConverter function,
-    //        and save the result in a variable.
-    var timeConverted = stopwatch.timeConverter(stopwatch.time);
-
-
-    //Used variable you just created to show the converted time in the "display" div.
-    $("#timer").html(timeConverted);
-
-    if (stopwatch.time === 0) {
-
-      stopwatch.stop();
-    }
-
-
-  },
-
-  timeConverter: function (t) {
-
-    //  Takes the current time in seconds and convert it to minutes and seconds (mm:ss).
-    var minutes = Math.floor(t / 60);
-    var seconds = t - (minutes * 60);
-
-    if (seconds < 10) {
-      seconds = "0" + seconds;
-    }
-
-    if (minutes === 0) {
-      minutes = "00";
-    } else if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
-
-    return minutes + ":" + seconds;
-  }
-
-
-
-
-
-
-
-};
