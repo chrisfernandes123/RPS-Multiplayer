@@ -45,9 +45,10 @@
           <div class="card card-default">
             <div class="card-body text-center instructions">
            
-                  Please enter your name and a 4 digit code of your choosing.  Then click the Connect button. <br>
+                  Please enter your name and a 4 digit code of your choosing.  Then, click the Connect button to join the game. <br>
                   Remember the name and 4 digit code entered and always use it to connect. 
                   The combination of the name and 4 digit code entered will be used to save your career wins.
+                  If you connected before, your name and 4 digit code used will populate by default.
             Good Luck! <br>
             <div id="div-add-player">
                   Name:  <input id="name-input" type="text">
@@ -57,15 +58,29 @@
                 </div>
                 
                   <span id="connected-viewers"> </span>
+                  <span id="people-connected"></span>
             </div>
           </div>
         </div>
       </div>
 
 
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card card-default">
+
+            <div class="card-body text-center">
+              <h5> Game Status: <span id="game-progress">Awaiting 2 players to join...</span></h5>
+             
+            </div>
+            
+          </div>
+        </div>
+      </div>
 
 
-    <!-- Current Product -->
+
+    <!-- Game -->
     <div class="row">
       <div class="col-lg-12">
         <div class="card card-default">
@@ -105,18 +120,27 @@
 
             <div class="row text-center">
                 <div class="col-sm-5">
-                    <h3>  <span id="player1WinCount"></span></h3>
-                    <h5>  <span id="player1CareerWinCount"></span></h5>
+                    <h3>  <span id="player1WinLossCount"></span></h3>
+                    <h5>  <span id="player1CareerWinLossCount"></span></h5>
                 </div>
                 <div class="col-sm-2">
                    
                   </div>
                 <div class="col-sm-5">
-                    <h3>  <span id="player2WinCount"></span></h3>
-                    <h5>  <span id="player2CareerWinCount"></span></h5>
+                    <h3>  <span id="player2WinLossCount"></span></h3>
+                    <h5>  <span id="player2CareerWinLossCount"></span></h5>
                   </div>
 
                 </div>
+
+
+                <div class="row text-center">
+                  <div class="col-sm-12">
+                    <h9> Round Status: <span id="round-results">waiting for results</span></h9>
+                  </div>
+ 
+                  </div>
+  
 
 
 
@@ -140,6 +164,7 @@
               <button class="btn btn-primary" id="rock" type="submit">Rock</button>
               <button class="btn btn-primary" id="paper" type="submit">Paper</button>
               <button class="btn btn-primary" id="scissors" type="submit">Scissors</button>
+              
             </div>
         </div>
       </div>
@@ -148,25 +173,7 @@
 
 
 
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card card-default">
-        <div class="card-header">
-          People connected:
-
-         
-        </div>
-        <div class="card-body text-center">
-            <span id="people-connected"></span>
-
-            
-          </div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
+ 
 
 </div>
 
