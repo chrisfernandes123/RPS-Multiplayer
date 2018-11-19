@@ -6,13 +6,22 @@
 // Make sure to match the configuration to the script version number in the HTML
 // (Ex. 3.0 != 3.7.0)
 var config = {
-  //From Chris Fernandes personal project on Firebase.
+  //Production Environment - From Chris Fernandes personal project on Firebase. 
   apiKey: "AIzaSyB-ujSDKh5YP7QcHQkaKqMqXegK2AZXJYM",
   authDomain: "rps-multiplayer-252fb.firebaseapp.com",
   databaseURL: "https://rps-multiplayer-252fb.firebaseio.com",
   projectId: "rps-multiplayer-252fb",
   storageBucket: "rps-multiplayer-252fb.appspot.com",
   messagingSenderId: "967692116954"
+
+   //Testing Environment - From Chris Fernandes personal project on Firebase. 
+  // apiKey: "AIzaSyB4erVe309t0T4D-EnK2ZoJiqxqvS86aDE",
+  // authDomain: "rps-multiplayer-dev.firebaseapp.com",
+  // databaseURL: "https://rps-multiplayer-dev.firebaseio.com",
+  // projectId: "rps-multiplayer-dev",
+  // storageBucket: "rps-multiplayer-dev.appspot.com",
+  // messagingSenderId: "474940701437"
+
 };
 
 firebase.initializeApp(config);
@@ -29,6 +38,7 @@ var player2CareerWinCount = 0;
 var player1CareerLossCount = 0;
 var player2CareerLossCount = 0;
 var dbObjectAddPlayers;
+var player = "";
 var player1 = "";
 var player2 = "";
 var player1Code = "";
@@ -164,6 +174,7 @@ database.ref(dbRefPathAddPlayers + "RoundStatus/").on("value", function (snapsho
 
 
 
+
 // Whenever a user clicks the submit-bid button
 $("#add-player").on("click", function (event) {
   event.preventDefault();
@@ -186,6 +197,41 @@ $("#add-player").on("click", function (event) {
     dbObjectAddPlayers = snapshot.val();
 
 
+    // if (snapshot.child("Player1").exists() && snapshot.child("Player2").exists()){
+      
+    //   if ($("#name-input").length){
+    //     player = $("#name-input").val();
+    //     alert("a");
+    //     alert(player);
+    //   }
+
+    //   var playerCode = $("#code-input").val();
+    //   $("#instructionsAndConnect").empty();
+    //   $("#button-row").empty();
+      
+         
+    //     con.update({
+    //             name: player
+    //           });
+     
+     
+    //          database.ref(dbRefPathAddPlayers + player + "/").set({
+    //           name: player,
+    //           key: con.key,
+    //           code: playerCode,
+    //           career: ""
+    //         });
+
+            
+
+      
+    //         database.ref(dbRefPathAddPlayers + player + "/").onDisconnect().remove();
+
+    // }
+
+
+
+
   
   
     if (snapshot.child("Player1").exists() && bRoundComplete === false) {
@@ -196,10 +242,19 @@ $("#add-player").on("click", function (event) {
        
         getPlayer2Career(dbObjectAddPlayers.Player2.career);
       } else {
+
+          var bPlayer2Exists = false;
+          if (snapshot.child("Player2").exists()){
+            bPlayer2Exists = true;
+          }
+          else{
+            bPlayer2Exists = false;
+          }
     
-        if (player2 === "" && $("#name-input").length) {
+        if ( bPlayer2Exists === false && $("#name-input").length) {
           
           player2 = $("#name-input").val();
+         // player =  player2 ;
           player2Code = $("#code-input").val();
 
           dbRefPathPlayer2Career = dbRefPath + "Career/" + player2 + "|" + player2Code + "/";
@@ -221,6 +276,9 @@ $("#add-player").on("click", function (event) {
             career: dbRefPathPlayer2Career
           });
 
+          // showNewViewer(player2);
+
+
           database.ref(dbRefPathAddPlayers + "Player2/").onDisconnect().remove();
 
           database.ref(dbRefPathAddPlayers + "GameStatus/").set({
@@ -236,9 +294,22 @@ $("#add-player").on("click", function (event) {
 
       }
     } else {
-      if (player1 === "") {
+
+      var bPlayer1Exists = false;
+      if (snapshot.child("Player1").exists()){
+        bPlayer1Exists = true;
+      }
+      else{
+        bPlayer1Exists = false;
+      }
+
+
+
+
+      if (bPlayer1Exists === false) {
         
         player1 = $("#name-input").val();
+       // player =  player1 ;
         player1Code = $("#code-input").val();
 
         dbRefPathPlayer1Career = dbRefPath + "Career/" + player1 + "|" + player1Code + "/";
@@ -259,6 +330,9 @@ $("#add-player").on("click", function (event) {
           code: player1Code,
           career: dbRefPathPlayer1Career
         });
+
+
+
 
         database.ref(dbRefPathAddPlayers + "Player1/").onDisconnect().remove();
  
@@ -285,6 +359,19 @@ $("#add-player").on("click", function (event) {
   $("#player2CareerWinLossCount").html("Career Win: " + 0 + " , Loss:" + 0);
 
 });
+
+
+// function showNewViewer(viewerName){
+
+//   $("#new-viewer").html(viewerName+ " has joined.");
+
+//   $("#new-viewer-alert").fadeTo(5000, 500).slideUp(500, function(){
+//   $("#new-viewer").slideUp(500);
+//   });
+  
+
+
+// }
 
 function getPlayer1Career(career) {
 
@@ -372,12 +459,11 @@ connectedRef.on("value", function (snap) {
 
     con = connectionsRef.push(true);
 
-    
-
     // Remove user from the connection list when they disconnect.
     con.onDisconnect().remove();
 
     // con.onDisconnect().set("I disconnected!");
+    //  showNewViewer(con.key);
 
 
 
@@ -387,11 +473,11 @@ connectedRef.on("value", function (snap) {
 
 // When first loaded or when the connections list changes...
 connectionsRef.on("value", function (snap) {
-
+      dbObjectViewersSnap = snap.val();
   // Display the viewer count in the html.
   // The number of online users is the number of children in the connections list.
   $("#connected-viewers").html("<br>" + snap.numChildren() + ' viewer(s) connected: ');
-
+  
       var peopleConnected ="";
   $("#people-connected").empty();
   //loop through connections and return keys
@@ -401,18 +487,22 @@ connectionsRef.on("value", function (snap) {
     var dbObjectChildSnap = childsnap.val();
 
     if (childsnap.child("name").exists()){
+      
      
          
         //Is not found in the people Connected string.
         if (peopleConnected.indexOf(dbObjectChildSnap.name) === -1){
           
           peopleConnected = peopleConnected + "<b>Name:</b> " + dbObjectChildSnap.name + " | ";
+          player = dbObjectChildSnap.name;
+
         }
         //If anonymous key is found in found in peopleConnected string.
         if (peopleConnected.indexOf(childsnap.key) !== -1){
          
           //remove the key associated to the Name if found.
           peopleConnected = peopleConnected.replace("Anonymous: " + childsnap.key +  " | ",' ');
+          player = childsnap.key;
         }
 
     }
@@ -423,6 +513,10 @@ connectionsRef.on("value", function (snap) {
       if (peopleConnected.indexOf(childsnap.key) === -1){
         
         peopleConnected = peopleConnected + "<b>Anonymous:</b> " + childsnap.key + " | ";
+        player = childsnap.key;
+      }
+      else{
+        alert("b");
       }
 
         
@@ -441,6 +535,128 @@ connectionsRef.on("value", function (snap) {
 
 
 
+
+
+// $("#add-chat").on("click", function (event) {
+//   event.preventDefault();
+
+
+//     var chatMsg = $("#chat-input").val();
+//     $("#chat-input").val("");
+
+//       database.ref(dbRefPathAddPlayers + "Chat/").push({
+//         chatDate:  moment().format("MM/DD/YYYY hh:mm a"),
+//         chatPlayerName: player,
+//         chatPlayerMsg: chatMsg
+//     });
+
+// });
+
+
+// alert("A");
+// var tr = $("<tr>");
+// var tdChatDate = $("<td>");
+// var tdChatPlayerName = $("<td>");
+// var tdChatPlayerMsg = $("<td>");
+
+// tdChatDate.html("Date");
+// tdChatPlayerName.html("Name");
+// tdChatPlayerMsg.html("Message");
+
+// tr.append(tdChatDate);
+//  tr.append(tdChatPlayerName);
+//  tr.append(tdChatPlayerMsg);
+
+//  $("#chat-msgs").append(tr);
+
+
+
+
+
+
+// database.ref(dbRefPathAddPlayers + "Chat/").on("child_added", function (snapshot) {
+//   var dbObjectChat = snapshot.val();
+
+//   $("#chatPlayerMsg").html(dbObjectChat.chatDate + " " + dbObjectChat.chatPlayerName + " says: " + dbObjectChat.chatPlayerMsg);
+
+//   $("#success-alert").fadeTo(5000, 500).slideUp(500, function(){
+  
+//     $("#success-alert").slideUp(500);
+//   });
+
+//   alert("B");
+//   var tr = $("<tr>");
+//   var tdChatDate = $("<td>");
+//   var tdChatPlayerName  = $("<td>");
+//   var tdChatPlayerMsg = $("<td>");
+  
+
+//   tdChatDate.append(dbObjectChat.chatDate);
+//   tdChatPlayerName.append(dbObjectChat.chatPlayerName);
+//   tdChatPlayerMsg.append(dbObjectChat.chatPlayerMsg);
+
+//  tr.append(tdChatDate);
+//    tr.append(tdChatPlayerName);
+//    tr.append(tdChatPlayerMsg);
+
+//    $("#chat-msgs").append(tr);
+
+
+
+
+// });
+
+
+
+// database.ref(dbRefPathAddPlayers + "Chat/").on("value", function (snapshot) {
+//    dbObjectChat = snapshot.val();
+
+//   var bClearChat = false;
+
+//  if (snapshot.numChildren() > 10){
+
+//       var num = 1;
+//       var numRemove = 6;
+
+//       snapshot.forEach(function(childsnap){
+          
+//               if (num <= numRemove){        
+//              database.ref(dbRefPathAddPlayers + "Chat/" + childsnap.key + "/").remove();
+//             } 
+//              num++;
+//       });
+
+//       $("#chat-msgs").empty();
+      
+
+//       alert("c");
+//       var tr = $("<tr>");
+//       var tdChatDate = $("<td>");
+//       var tdChatPlayerName = $("<td>");
+//       var tdChatPlayerMsg = $("<td>");
+      
+//       tdChatDate.html("Date");
+//       tdChatPlayerName.html("Name");
+//       tdChatPlayerMsg.html("Message");
+      
+//       tr.append(tdChatDate);
+//        tr.append(tdChatPlayerName);
+//        tr.append(tdChatPlayerMsg);
+      
+//        $("#chat-msgs").append(tr);
+
+        
+
+
+
+
+
+//  }
+
+ 
+
+
+// });
 
 
 // ----------------------------------------------------------------
