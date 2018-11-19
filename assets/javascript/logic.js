@@ -694,19 +694,19 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
   }
 
 
-  if (snapshot.child("Player1").child("WinsLosses").child("Wins").exists()) {
+  if (snapshot.child("Player1").child("WinsLosses").child("Wins").exists() && bRoundComplete === false) {
     player1WinCount = dbObjectAddPlayers.Player1.WinsLosses.Wins;
   }
 
-  if (snapshot.child("Player2").child("WinsLosses").child("Wins").exists()) {
+  if (snapshot.child("Player2").child("WinsLosses").child("Wins").exists() && bRoundComplete === false) {
     player2WinCount = dbObjectAddPlayers.Player2.WinsLosses.Wins;
   }
 
-  if (snapshot.child("Player1").child("WinsLosses").child("Losses").exists()) {
+  if (snapshot.child("Player1").child("WinsLosses").child("Losses").exists() && bRoundComplete === false) {
     player1LossCount = dbObjectAddPlayers.Player1.WinsLosses.Losses;
   }
 
-  if (snapshot.child("Player2").child("WinsLosses").child("Losses").exists()) {
+  if (snapshot.child("Player2").child("WinsLosses").child("Losses").exists() && bRoundComplete === false) {
     player2LossCount = dbObjectAddPlayers.Player2.WinsLosses.Losses;
   }
 
@@ -878,8 +878,8 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
     //housekeeping to automatically remove data if the user disconnects.
     database.ref(dbRefPathPlayers + "Player1/Choice/").onDisconnect().remove();
     database.ref(dbRefPathPlayers + "Player2/Choice/").onDisconnect().remove();
-    database.ref(dbRefPathPlayers + "Player1/Wins/").onDisconnect().remove();
-    database.ref(dbRefPathPlayers + "Player2/Wins/").onDisconnect().remove();
+    database.ref(dbRefPathPlayers + "Player1/WinsLosses/").onDisconnect().remove();
+    database.ref(dbRefPathPlayers + "Player2/WinsLosses/").onDisconnect().remove();
 
     if (player1Wins === true) {
       player1Wins = false;
@@ -898,20 +898,17 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
       player1CareerLossCount++;
      
 
-
-
-
     }
 
     database.ref(dbRefPathPlayers + "Player1/WinsLosses/").set({
       Wins: player1WinCount,
-      Losses: player1LossCount,
+      Losses: player1LossCount
     });
 
-
+    alert(player2WinCount);
     database.ref(dbRefPathPlayers + "Player2/WinsLosses/").set({
       Wins: player2WinCount,
-      Losses: player2LossCount,
+      Losses: player2LossCount
     });
 
 
