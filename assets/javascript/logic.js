@@ -516,7 +516,7 @@ connectionsRef.on("value", function (snap) {
         player = childsnap.key;
       }
       else{
-        alert("b");
+        
       }
 
         
@@ -905,7 +905,7 @@ database.ref(dbRefPathPlayers).on("value", function (snapshot) {
       Losses: player1LossCount
     });
 
-    alert(player2WinCount);
+   
     database.ref(dbRefPathPlayers + "Player2/WinsLosses/").set({
       Wins: player2WinCount,
       Losses: player2LossCount
