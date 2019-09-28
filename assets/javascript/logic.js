@@ -7,12 +7,20 @@
 // (Ex. 3.0 != 3.7.0)
 var config = {
   //Production Environment - From Chris Fernandes personal project on Firebase. 
-  apiKey: "AIzaSyB-ujSDKh5YP7QcHQkaKqMqXegK2AZXJYM",
-  authDomain: "rps-multiplayer-252fb.firebaseapp.com",
-  databaseURL: "https://rps-multiplayer-252fb.firebaseio.com",
-  projectId: "rps-multiplayer-252fb",
-  storageBucket: "rps-multiplayer-252fb.appspot.com",
-  messagingSenderId: "967692116954"
+  apiKey: "AIzaSyABoU8nk9TCf7MwR3iSJWIc6Bw478DfLyM",
+  authDomain: "coffee-check-in.firebaseapp.com",
+  databaseURL: "https://coffee-check-in.firebaseio.com",
+  projectId: "coffee-check-in",
+  storageBucket: "",
+  messagingSenderId: "766833466808",
+  appId: "1:766833466808:web:77dc635e8560ddbc3b834d",
+  measurementId: "G-FXDKCVPD8N"
+  // apiKey: "AIzaSyB-ujSDKh5YP7QcHQkaKqMqXegK2AZXJYM",
+  // authDomain: "rps-multiplayer-252fb.firebaseapp.com",
+  // databaseURL: "https://rps-multiplayer-252fb.firebaseio.com",
+  // projectId: "rps-multiplayer-252fb",
+  // storageBucket: "rps-multiplayer-252fb.appspot.com",
+  // messagingSenderId: "967692116954"
 
    //Testing Environment - From Chris Fernandes personal project on Firebase. 
   // apiKey: "AIzaSyB4erVe309t0T4D-EnK2ZoJiqxqvS86aDE",
@@ -26,7 +34,7 @@ var config = {
 
 firebase.initializeApp(config);
 
-var dbRefPath = "RPS-Multiplayer/"
+var dbRefPath = "CoffeeCheckIn/"
 var dbRefPathPlayers = dbRefPath + "Players/"
 var dbRefPathAddPlayers = dbRefPath + "AddPlayers/"
 var dbObjectRefPathAddPlayers;
